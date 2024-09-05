@@ -1,4 +1,5 @@
 import javax.imageio.ImageIO;
+import javax.sound.sampled.*;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
@@ -11,6 +12,7 @@ public class Menu extends JPanel implements KeyListener {
     private BufferedImage[] menuSprites;
     private int selectedOption = 0;
     private JFrame window;
+    private Clip musicClip;
 
     public Menu(JFrame window) {
         this.window = window;
@@ -24,14 +26,22 @@ public class Menu extends JPanel implements KeyListener {
             menuSprites[1] = spriteSheet.getSubimage(252, 360, 256, 96);
             menuSprites[2] = spriteSheet.getSubimage(280, 365, 15, 15);
             menuSprites[3] = spriteSheet.getSubimage(265, 365, 15, 15);
-        } catch (IOException e) {
+
+            File audioFile = new File("src/sounds/track1.wav");
+            AudioInputStream audioStream = AudioSystem.getAudioInputStream(audioFile);
+            AudioFormat format = audioStream.getFormat();
+            DataLine.Info info = new DataLine.Info(Clip.class, format);
+            musicClip = (Clip) AudioSystem.getLine(info);
+            musicClip.open(audioStream);
+            musicClip.start();
+        } catch (IOException | UnsupportedAudioFileException e) {
             throw new RuntimeException();
+        } catch (LineUnavailableException e) {
+            throw new RuntimeException(e);
         }
 
         addKeyListener(this);
         setFocusable(true);
-
-        //requestFocusInWindow();
         SwingUtilities.invokeLater(this::requestFocusInWindow);
     }
 
@@ -62,9 +72,16 @@ public class Menu extends JPanel implements KeyListener {
             window.add(new Game(window, selectedOption));
             window.revalidate();
             window.repaint();
+            stopMusic();
         }
 
         repaint();
+    }
+
+    private void stopMusic() {
+        if (musicClip != null && musicClip.isRunning()) {
+            musicClip.stop();
+        }
     }
 
     @Override
