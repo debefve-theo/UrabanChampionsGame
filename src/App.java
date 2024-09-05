@@ -1,10 +1,25 @@
+import javax.imageio.ImageIO;
 import javax.swing.*;
-import java.awt.event.KeyAdapter;
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 
 public class App {
 
-    private static void initWindow() {
+    private static <Image> void initWindow() {
         JFrame window = new JFrame("Urban Champion");
+
+        try {
+            BufferedImage icon = ImageIO.read(new File("src/sprites/icon.png"));
+            window.setIconImage(icon);
+
+            // MAC OS code
+            Taskbar taskbar = Taskbar.getTaskbar();
+            taskbar.setIconImage(icon);
+        } catch (IOException e) {
+            throw new RuntimeException();
+        }
 
         window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 

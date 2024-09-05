@@ -39,8 +39,11 @@ public class Game extends JPanel implements KeyListener {
             BufferedImage spriteSheet3 = ImageIO.read(new File("src/sprites/characters.png"));
             eventSprites = new BufferedImage[5];
 
-            eventSprites[0] = makeColorTransparent(spriteSheet3.getSubimage(252, 318, 68, 26));
-            eventSprites[1] = makeColorTransparent(spriteSheet3.getSubimage(319, 318, 68, 26));
+            eventSprites[0] = makeColorTransparent(spriteSheet3.getSubimage(252, 318, 68, 26), new Color(100,176,255));
+            eventSprites[1] = makeColorTransparent(spriteSheet3.getSubimage(319, 318, 68, 26), new Color(100,176,255));
+
+            BufferedImage spriteSheet4 = ImageIO.read(new File("src/sprites/hole.png"));
+            eventSprites[2] = spriteSheet4.getSubimage(0, 0, 221, 72);
 
             File audioFile = new File("src/sounds/track8.wav");
             AudioInputStream audioStream = AudioSystem.getAudioInputStream(audioFile);
@@ -48,7 +51,7 @@ public class Game extends JPanel implements KeyListener {
             DataLine.Info info = new DataLine.Info(Clip.class, format);
             musicClip = (Clip) AudioSystem.getLine(info);
             musicClip.open(audioStream);
-            musicClip.start();
+            //musicClip.start();
 
         } catch (IOException | UnsupportedAudioFileException e) {
             throw new RuntimeException();
@@ -74,7 +77,10 @@ public class Game extends JPanel implements KeyListener {
 
         g.drawImage(menuSprites[0], 0, 678, 1280, 288, null); // background
 
-        g.drawImage(eventSprites[0], 300, 548, 340, 130, null);
+        g.drawImage(eventSprites[0], 300, 548, 340, 130, null); // police car
+
+        g.drawImage(eventSprites[2], 1082, 585, 199, 65, null); //221 72 *0,9
+        g.drawImage(eventSprites[2], 1, 585, 199, 65, null); //221 72 *0,9
     }
 
     @Override
@@ -106,9 +112,7 @@ public class Game extends JPanel implements KeyListener {
 
     }
 
-    public static BufferedImage makeColorTransparent(BufferedImage image) {
-        Color colorToReplace = new Color(100,176,255);
-
+    public static BufferedImage makeColorTransparent(BufferedImage image, Color colorToReplace) {
         BufferedImage transparentImage = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_ARGB);
 
         for (int x = 0; x < image.getWidth(); x++) {
