@@ -23,7 +23,9 @@ public class App {
 
         window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-        Menu menu = new Menu(window);
+        Sprites sprites = new Sprites();
+
+        Menu menu = new Menu(window, sprites);
         window.add(menu);
 
         window.setResizable(false);

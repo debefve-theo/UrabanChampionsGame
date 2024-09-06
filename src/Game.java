@@ -1,57 +1,36 @@
 import java.awt.*;
 import java.awt.event.*;
-import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import javax.imageio.ImageIO;
 import javax.sound.sampled.*;
 import javax.swing.*;
 
 public class Game extends JPanel implements KeyListener {
 
-    private final BufferedImage[] backgrounds;
-    private final BufferedImage[] menuSprites;
-    private final BufferedImage[] eventSprites;
     private JFrame window;
+    private Sprites sprites;
     private Clip musicClip;
+    private int mode;
+    private Player player1;
+    private Player player2;
 
-    public Game(JFrame window, int mode) {
+    public Game(JFrame window, Sprites sprites, int mode) {
         this.window = window;
+        this.sprites = sprites;
+        this.mode = mode;
         setPreferredSize(new Dimension(1280, 960));
 
+        player1 = new Player(1);
+        player2 = new Player(2);
+
         try {
-            BufferedImage spriteSheet = ImageIO.read(new File("src/sprites/street.gif"));
-            backgrounds = new BufferedImage[5];
-
-            for (int i = 0; i < 5; i++) {
-                backgrounds[i] = spriteSheet.getSubimage(i*256, 0, 256, 160);
-            }
-
-            BufferedImage spriteSheet2 = ImageIO.read(new File("src/sprites/characters.png"));
-            menuSprites = new BufferedImage[1];
-
-            if(mode == 0) {
-                menuSprites[0] = spriteSheet2.getSubimage(256, 0, 256, 72);
-            } else if (mode == 1) {
-                menuSprites[0] = spriteSheet2.getSubimage(256, 73, 256, 72);
-            }
-
-            BufferedImage spriteSheet3 = ImageIO.read(new File("src/sprites/characters.png"));
-            eventSprites = new BufferedImage[5];
-
-            eventSprites[0] = makeColorTransparent(spriteSheet3.getSubimage(252, 318, 68, 26), new Color(100,176,255));
-            eventSprites[1] = makeColorTransparent(spriteSheet3.getSubimage(319, 318, 68, 26), new Color(100,176,255));
-
-            BufferedImage spriteSheet4 = ImageIO.read(new File("src/sprites/hole.png"));
-            eventSprites[2] = spriteSheet4.getSubimage(0, 0, 221, 72);
-
             File audioFile = new File("src/sounds/track8.wav");
             AudioInputStream audioStream = AudioSystem.getAudioInputStream(audioFile);
             AudioFormat format = audioStream.getFormat();
             DataLine.Info info = new DataLine.Info(Clip.class, format);
             musicClip = (Clip) AudioSystem.getLine(info);
             musicClip.open(audioStream);
-            //musicClip.start();
+            musicClip.start();
 
         } catch (IOException | UnsupportedAudioFileException e) {
             throw new RuntimeException();
@@ -62,7 +41,6 @@ public class Game extends JPanel implements KeyListener {
         addKeyListener(this);
         setFocusable(true);
 
-        //requestFocusInWindow();
         SwingUtilities.invokeLater(this::requestFocusInWindow);
     }
 
@@ -70,24 +48,24 @@ public class Game extends JPanel implements KeyListener {
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
 
-        if (backgrounds != null && backgrounds.length > 0) {
-            int currentBackgroundIndex = 0;
-            g.drawImage(backgrounds[currentBackgroundIndex], 0, 0, 1280, 678, null); // menu
-        }
+        int currentBackgroundIndex = 0;
+        g.drawImage(sprites.getSprite(currentBackgroundIndex, "street"), 0, 0, 1280, 678, null); // background
 
-        g.drawImage(menuSprites[0], 0, 678, 1280, 288, null); // background
+        g.drawImage(sprites.getSprite(mode, "ath"), 0, 678, 1280, 288, null); // menu
 
-        g.drawImage(eventSprites[0], 300, 548, 340, 130, null); // police car
+        g.drawImage(sprites.getSprite(1, "event"), 300, 548, 340, 130, null); // police car
 
-        g.drawImage(eventSprites[2], 1082, 585, 199, 65, null); //221 72 *0,9
-        g.drawImage(eventSprites[2], 1, 585, 199, 65, null); //221 72 *0,9
+        g.drawImage(sprites.getSprite(0, "event"), 1082, 585, 199, 65, null); //221 72 *0,9
+        g.drawImage(sprites.getSprite(0, "event"), 1, 585, 199, 65, null); //221 72 *0,9
+
+        g.drawImage(sprites.getSprite(20, "player1"), 800, 440, 120, 152, null); // 24*5 38*4
     }
 
     @Override
     public void keyPressed(KeyEvent e) {
         if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
             window.getContentPane().removeAll();
-            window.add(new Menu(window));
+            window.add(new Menu(window, sprites));
             window.revalidate();
             window.repaint();
             stopMusic();
@@ -110,24 +88,5 @@ public class Game extends JPanel implements KeyListener {
     @Override
     public void keyReleased(KeyEvent e) {
 
-    }
-
-    public static BufferedImage makeColorTransparent(BufferedImage image, Color colorToReplace) {
-        BufferedImage transparentImage = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_ARGB);
-
-        for (int x = 0; x < image.getWidth(); x++) {
-            for (int y = 0; y < image.getHeight(); y++) {
-                int rgb = image.getRGB(x, y);
-                Color pixelColor = new Color(rgb, true);
-
-                if (pixelColor.equals(colorToReplace)) {
-                    transparentImage.setRGB(x, y, 0x00FFFFFF);
-                } else {
-                    transparentImage.setRGB(x, y, rgb);
-                }
-            }
-        }
-
-        return transparentImage;
     }
 }
