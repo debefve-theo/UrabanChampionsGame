@@ -30,25 +30,6 @@ public class Sprites {
         throw new IllegalArgumentException("Sprite not found");
     }
 
-    public static BufferedImage transparentSprite(BufferedImage image, Color colorToReplace) {
-        BufferedImage transparentImage = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_ARGB);
-
-        for (int x = 0; x < image.getWidth(); x++) {
-            for (int y = 0; y < image.getHeight(); y++) {
-                int rgb = image.getRGB(x, y);
-                Color pixelColor = new Color(rgb, true);
-
-                if (pixelColor.equals(colorToReplace)) {
-                    transparentImage.setRGB(x, y, 0x00FFFFFF);
-                } else {
-                    transparentImage.setRGB(x, y, rgb);
-                }
-            }
-        }
-
-        return transparentImage;
-    }
-
     private void getSpritesFromFiles() {
         try {
             BufferedImage spriteSheetCharacters = ImageIO.read(new File("src/sprites/characters.png"));
@@ -66,7 +47,13 @@ public class Sprites {
                 }
 
                 if(sprite.getBackground() != null) {
-                    sprite.setImage(transparentSprite(sprite.getImage(), sprite.getBackground()));
+                    sprite.setImage(SpriteUtils.transparentSprite(sprite.getImage(), sprite.getBackground()));
+                }
+                if(Objects.equals(sprite.getCollection(), "player1") || Objects.equals(sprite.getCollection(), "player2")) {
+                    sprite.setImage(SpriteUtils.resizeAndCenterSprite(sprite.getImage(), 31, 40));
+                }
+                if(Objects.equals(sprite.getCollection(), "player2")) {
+                    sprite.setImage(SpriteUtils.flipImageHorizontally(sprite.getImage()));
                 }
             }
         }
@@ -153,7 +140,40 @@ public class Sprites {
         sprites.add(new Sprite("characters.png", 55, 419, 31, 35, new Color(100,176,255), "player1"));  // Player 1 state 26
         sprites.add(new Sprite("characters.png", 91, 416, 31, 38, new Color(100,176,255), "player1"));  // Player 1 state 27
 
-        // Sprites player 2
+        // Sprites player 2 (+ 127 x)
+        sprites.add(new Sprite("characters.png", 137, 159, 24, 38, new Color(100,176,255), "player2"));  // Player 1 state 1
+        sprites.add(new Sprite("characters.png", 167, 160, 21, 37, new Color(100,176,255), "player2"));  // Player 1 state 2
+        sprites.add(new Sprite("characters.png", 190, 159, 24, 38, new Color(100,176,255), "player2"));  // Player 1 state 3
+        sprites.add(new Sprite("characters.png", 218, 161, 31, 36, new Color(100,176,255), "player2"));  // Player 1 state 4
+
+        sprites.add(new Sprite("characters.png", 134, 202, 22, 40, new Color(100,176,255), "player2"));   // Player 1 state 5
+        sprites.add(new Sprite("characters.png", 158, 203, 21, 39, new Color(100,176,255), "player2"));  // Player 1 state 6
+        sprites.add(new Sprite("characters.png", 182, 203, 18, 39, new Color(100,176,255), "player2"));  // Player 1 state 7
+        sprites.add(new Sprite("characters.png", 203, 202, 14, 40, new Color(100,176,255), "player2"));  // Player 1 state 8
+
+        sprites.add(new Sprite("characters.png", 137, 249, 16, 40, new Color(100,176,255), "player2"));  // Player 1 state 9
+        sprites.add(new Sprite("characters.png", 157, 249, 16, 40, new Color(100,176,255), "player2"));  // Player 1 state 10
+        sprites.add(new Sprite("characters.png", 175, 249, 21, 40, new Color(100,176,255), "player2"));  // Player 1 state 11
+        sprites.add(new Sprite("characters.png", 199, 253, 29, 36, new Color(100,176,255), "player2"));  // Player 1 state 12
+
+        sprites.add(new Sprite("characters.png", 137, 292, 14, 40, new Color(100,176,255), "player2"));  // Player 1 state 13
+        sprites.add(new Sprite("characters.png", 154, 292, 14, 40, new Color(100,176,255), "player2"));  // Player 1 state 14
+        sprites.add(new Sprite("characters.png", 170, 292, 21, 40, new Color(100,176,255), "player2"));  // Player 1 state 15
+        sprites.add(new Sprite("characters.png", 193, 296, 30, 36, new Color(100,176,255), "player2"));  // Player 1 state 16
+
+        sprites.add(new Sprite("characters.png", 137, 334, 16, 39, new Color(100,176,255), "player2"));  // Player 1 state 17
+        sprites.add(new Sprite("characters.png", 155, 336, 16, 37, new Color(100,176,255), "player2"));  // Player 1 state 18
+        sprites.add(new Sprite("characters.png", 175, 336, 24, 37, new Color(100,176,255), "player2"));  // Player 1 state 19
+        sprites.add(new Sprite("characters.png", 201, 342, 22, 31, new Color(100,176,255), "player2"));  // Player 1 state 20
+
+        sprites.add(new Sprite("characters.png", 137, 379, 30, 24, new Color(100,176,255), "player2"));  // Player 1 state 21
+        sprites.add(new Sprite("characters.png", 169, 378, 30, 29, new Color(100,176,255), "player2"));  // Player 1 state 22
+        sprites.add(new Sprite("characters.png", 201, 386, 22, 21, new Color(100,176,255), "player2"));  // Player 1 state 23
+
+        sprites.add(new Sprite("characters.png", 134, 416, 23, 38, new Color(100,176,255), "player2"));   // Player 1 state 24
+        sprites.add(new Sprite("characters.png", 159, 415, 21, 39, new Color(100,176,255), "player2"));  // Player 1 state 25
+        sprites.add(new Sprite("characters.png", 182, 419, 31, 35, new Color(100,176,255), "player2"));  // Player 1 state 26
+        sprites.add(new Sprite("characters.png", 218, 416, 31, 38, new Color(100,176,255), "player2"));  // Player 1 state 27
 
         return sprites;
     }

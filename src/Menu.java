@@ -10,7 +10,7 @@ public class Menu extends JPanel implements KeyListener {
     private int selectedOption = 0;
     private JFrame window;
     private Sprites sprites;
-    private Clip musicClip;
+    private AudioManager audioManager;
 
     public Menu(JFrame window, Sprites sprites) {
         this.window = window;
@@ -18,19 +18,8 @@ public class Menu extends JPanel implements KeyListener {
 
         setPreferredSize(new Dimension(1280, 960)); // *5 - *4
 
-        try {
-            File audioFile = new File("src/sounds/track1.wav");
-            AudioInputStream audioStream = AudioSystem.getAudioInputStream(audioFile);
-            AudioFormat format = audioStream.getFormat();
-            DataLine.Info info = new DataLine.Info(Clip.class, format);
-            musicClip = (Clip) AudioSystem.getLine(info);
-            musicClip.open(audioStream);
-            //musicClip.start();
-        } catch (IOException | UnsupportedAudioFileException e) {
-            throw new RuntimeException();
-        } catch (LineUnavailableException e) {
-            throw new RuntimeException(e);
-        }
+        audioManager = new AudioManager("src/sounds/track1.wav");
+        //audioManager.startMusic();
 
         addKeyListener(this);
         setFocusable(true);
@@ -64,16 +53,10 @@ public class Menu extends JPanel implements KeyListener {
             window.add(new Game(window, sprites, selectedOption));
             window.revalidate();
             window.repaint();
-            stopMusic();
+            audioManager.stopMusic();
         }
 
         repaint();
-    }
-
-    private void stopMusic() {
-        if (musicClip != null && musicClip.isRunning()) {
-            musicClip.stop();
-        }
     }
 
     @Override
